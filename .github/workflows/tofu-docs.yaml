@@ -2,10 +2,13 @@ name: OpenTofu Docs
 
 on:
   pull_request:
+    types:
+      - opened
+      - synchronize
     branches:
       - main
     paths:
-      - 'aws/*/*.tf'
+      - 'aws/**/*.tf'
 
 jobs:
   tofu-docs:
