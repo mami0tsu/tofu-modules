@@ -1,10 +1,10 @@
-variable "group_membership_name" {
-  description = "IAM group membership name"
+variable "name" {
+  description = "IAM group name"
   type        = string
 }
 
-variable "group_name" {
-  description = "IAM group name"
+variable "group_membership_name" {
+  description = "IAM group membership name"
   type        = string
 }
 

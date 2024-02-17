@@ -3,7 +3,7 @@ data "aws_caller_identity" "current" {}
 module "iam_group" {
   source = "../../../iam-group"
 
-  group_name            = "example-group"
+  name                  = "example-group"
   group_membership_name = "membership-for-example"
 
   policy_name        = "example-group-policy"
@@ -27,9 +27,9 @@ data "aws_iam_policy_document" "assume_role_policy" {
 module "iam_role" {
   source = "../../../iam-role"
 
-  role_name        = "example-role"
-  role_description = "this is example role"
-  trust_policy     = data.aws_iam_policy_document.trust_policy.json
+  name         = "example-role"
+  description  = "this is example role"
+  trust_policy = data.aws_iam_policy_document.trust_policy.json
 
   policy_name        = "example-policy"
   policy_description = "this is example policy"

@@ -10,7 +10,7 @@ terraform {
 }
 
 resource "aws_iam_group" "this" {
-  name = var.group_name
+  name = var.name
 }
 
 resource "aws_iam_user" "this" {
