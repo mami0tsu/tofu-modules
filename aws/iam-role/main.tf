@@ -10,8 +10,8 @@ terraform {
 }
 
 resource "aws_iam_role" "this" {
-  name                = var.role_name
-  description         = var.role_description
+  name                = var.name
+  description         = var.description
   assume_role_policy  = var.trust_policy
   managed_policy_arns = var.managed_policy_arns
   inline_policy {}
