@@ -31,7 +31,7 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_group_membership_name"></a> [group\_membership\_name](#input\_group\_membership\_name) | IAM group membership name | `string` | n/a | yes |
-| <a name="input_group_name"></a> [group\_name](#input\_group\_name) | IAM group name | `string` | n/a | yes |
+| <a name="input_name"></a> [name](#input\_name) | IAM group name | `string` | n/a | yes |
 | <a name="input_policy"></a> [policy](#input\_policy) | IAM group policy in JSON formatted string | `string` | n/a | yes |
 | <a name="input_policy_description"></a> [policy\_description](#input\_policy\_description) | IAM group policy description | `string` | n/a | yes |
 | <a name="input_policy_name"></a> [policy\_name](#input\_policy\_name) | IAM group policy name | `string` | n/a | yes |
