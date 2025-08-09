@@ -1,34 +1,59 @@
-name: Create Pull Request
+name: create pull request
 
 on:
-  push:
-    branches-ignore:
-      - 'main'
+  create:
 
-env:
-  BASE_BRANCH: main
-  ASSIGNEE: ${{ vars.ASSIGNEE }}
-  REVIEWER: ${{ vars.REVIEWER }}
+# ワークフローレベルではパーミッションを全て無効化
+permissions: {}
+
+# デフォルトシェルを指定することでパイプエラーを有効化
+defaults:
+  run:
+    shell: bash
 
 jobs:
   create-pull-request:
     runs-on: ubuntu-latest
+    # デフォルトタイムアウト値は 600 なので調整
+    timeout-minutes: 5
     permissions:
       contents: read
       pull-requests: write
-    env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - name: Checkout
-        # v4.1.1
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+      - name: generate token
+        id: app-token
+        # v2.0.6
+        uses: actions/create-github-app-token@df432ceedc7162793a195dd1713ff69aefc7379e
         with:
+          app-id: ${{ vars.GH_APP_ID }}
+          private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
+
+      - name: checkout
+        # v4.2.2
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          token: ${{ steps.app-token.outputs.token }}
           fetch-depth: 0
 
-      - name: Check
+      - name: check
         id: check
-        run: echo "count=$(gh pr list -B ${{ env.BASE_BRANCH }} -H ${{ github.ref_name }} | wc -l)" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          pr_count="$(gh pr list --head ${{ github.ref_name }} --json number --jq 'length')"
+          if [[ "${pr_count}" -gt 0 ]]; then
+            echo "is-existed=true" >> "${GITHUB_OUTPUT}"
+          else
+            echo "is-existed=false" >> "${GITHUB_OUTPUT}"
+          fi
 
-      - name: Create Pull Request
-        if: ${{ steps.check.outputs.count == 0 }}
-        run: gh pr create --fill -B ${{ env.BASE_BRANCH }} -t ${{ github.ref_name }} -a ${{ env.ASSIGNEE }} -r ${{ env.REVIEWER }}
+      # NOTE: github_token で PR を作成するとワークフローがトリガーされないので GitHub App を使用した
+      - name: create
+        if: steps.check.outputs.is-existed == 'false'
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          gh pr create \
+            --fill \
+            --base "${{ github.repository.default_branch }}" \
+            --assignee "${{ github.actor }}"
