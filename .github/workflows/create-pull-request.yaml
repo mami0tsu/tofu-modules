@@ -52,8 +52,10 @@ jobs:
         if: steps.check.outputs.is-existed == 'false'
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          ACTOR: ${{ github.actor }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
         run: |
           gh pr create \
             --fill \
-            --base "${{ github.repository.default_branch }}" \
-            --assignee "${{ github.actor }}"
+            --base "$DEFAULT_BRANCH" \
+            --assignee "$ACTOR"
